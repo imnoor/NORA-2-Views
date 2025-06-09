@@ -12,34 +12,96 @@
     <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background */
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0f7fa 0%, #f3f4f6 100%);
         }
         .container {
             max-width: 1200px;
             margin: 2rem auto;
             padding: 1.5rem;
-            background-color: #ffffff;
-            border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background: rgba(255,255,255,0.95);
+            border-radius: 1.5rem;
+            box-shadow: 0 12px 32px 0 rgba(0, 194, 203, 0.10), 0 2px 4px 0 rgba(1, 87, 92, 0.08);
         }
         .plotly-graph-div {
             margin: 0 auto;
         }
         .llm-output-card {
-            background-color: #f0f9ff; /* Light blue background */
-            border-left: 4px solid #00C2CB; /* Accent border */
+            background: linear-gradient(90deg, #e0f7fa 0%, #f0f9ff 100%);
+            border-left: 4px solid #00C2CB;
             padding: 1rem;
-            border-radius: 0.5rem;
+            border-radius: 0.75rem;
             margin-top: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 16px 0 rgba(0, 194, 203, 0.10);
         }
         .llm-output-card.hidden {
             display: none;
         }
+        .hover-card {
+            position: fixed;
+            z-index: 1000;
+            min-width: 320px;
+            max-width: 400px;
+            background: linear-gradient(135deg, #f0f9ff 60%, #e0f7fa 100%);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 1.5px 6px rgba(0,0,0,0.08);
+            padding: 1.25rem 1.5rem;
+            color: #1a202c;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.18s cubic-bezier(.4,0,.2,1);
+        }
+        .hover-card.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .hover-card h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #01575C;
+        }
+        .hover-card .level-group {
+            margin-bottom: 0.5rem;
+        }
+        .hover-card .level-title {
+            font-weight: 600;
+            color: #008C9E;
+            margin-bottom: 0.2rem;
+        }
+        .hover-card ul {
+            margin: 0 0 0.5rem 0.5rem;
+            padding: 0;
+            list-style: disc inside;
+        }
+        .hover-card .vp-type {
+            display: inline-block;
+            font-size: 0.95em;
+            font-weight: 500;
+            color: #00C2CB;
+            margin-right: 0.5em;
+        }
+        .hover-card .vp-label {
+            font-weight: 500;
+            color: #1a202c;
+        }
+        .hover-card .meta-row {
+            margin-bottom: 0.3rem;
+            font-size: 0.98em;
+        }
+        .hover-card .meta-label {
+            font-weight: 600;
+            color: #008C9E;
+            margin-right: 0.4em;
+        }
+        .hover-card .meta-value {
+            color: #01575C;
+        }
         .loading-spinner {
-            border: 4px solid #f3f3f3; /* Light grey */
-            border-top: 4px solid #3498db; /* Blue */
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #00C2CB;
             border-radius: 50%;
             width: 24px;
             height: 24px;
@@ -50,11 +112,17 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* Sunburst text/font tweaks */
+        .plotly .slice text {
+            font-family: 'Inter', sans-serif !important;
+            font-weight: 500;
+            letter-spacing: 0.01em;
+        }
     </style>
 </head>
 <body class="antialiased">
     <div class="container">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Enhanced Enterprise Architecture Viewpoints Dashboard</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center" style="letter-spacing:0.01em;">Enhanced Enterprise Architecture Viewpoints Dashboard</h1>
         <div id="sunburstChart" class="w-full h-[600px] md:h-[800px]"></div>
 
         <div class="mt-8 p-4 bg-gray-50 rounded-lg shadow-sm">
@@ -75,6 +143,8 @@
             </div>
         </div>
     </div>
+    <!-- Floating hover card for sunburst interactions -->
+    <div id="hoverCard" class="hover-card"></div>
 
     <script type="text/javascript">
         document.addEventListener('DOMContentLoaded', function() {
@@ -117,6 +187,7 @@
             const llmDescriptionP = document.getElementById('llmDescription');
             const llmErrorP = document.getElementById('llmError');
             const loadingSpinner = document.getElementById('loadingSpinner');
+            const hoverCard = document.getElementById('hoverCard');
 
             let selectedViewpoint = null; // Stores the currently selected viewpoint from the chart
 
@@ -355,6 +426,98 @@
                 llmErrorP.textContent = '';
                 llmOutputDiv.classList.add('hidden');
                 clearDescriptionBtn.disabled = true;
+            });
+
+            // --- Hover Card Logic ---
+            // Helper: Group viewpoints by level and type for a domain
+            function getDomainViewpoints(domain) {
+                const levels = ['Conceptual Level', 'Logical Level', 'Physical Level'];
+                const result = {};
+                levels.forEach(level => {
+                    result[level] = { List: [], Matrix: [], Diagram: [] };
+                });
+                processedData.forEach(item => {
+                    if (item.domain === domain) {
+                        result[item.levelOfDetail][item.viewpointType].push(item.viewpoint);
+                    }
+                });
+                return result;
+            }
+
+            // Helper: Find viewpoint details by label (removes icon)
+            function findViewpointByLabel(label) {
+                // Remove icon from label
+                const cleanLabel = label.replace(/(\s*)(📄|▦|📈)$/, '').trim();
+                return processedData.find(item => item.viewpoint === cleanLabel);
+            }
+
+            // Helper: Show hover card
+            function showHoverCard(html, x, y) {
+                hoverCard.innerHTML = html;
+                hoverCard.classList.add('visible');
+                // Position: offset from mouse, but keep in viewport
+                const cardWidth = 360;
+                const cardHeight = 220;
+                let left = x + 24;
+                let top = y + 12;
+                if (left + cardWidth > window.innerWidth - 12) left = window.innerWidth - cardWidth - 12;
+                if (top + cardHeight > window.innerHeight - 12) top = window.innerHeight - cardHeight - 12;
+                hoverCard.style.left = left + 'px';
+                hoverCard.style.top = top + 'px';
+            }
+            function hideHoverCard() {
+                hoverCard.classList.remove('visible');
+                hoverCard.innerHTML = '';
+            }
+
+            // Sunburst hover event
+            sunburstChartDiv.on('plotly_hover', function(eventData) {
+                if (!eventData || !eventData.points || !eventData.points.length) return;
+                const pt = eventData.points[0];
+                const custom = pt.customdata;
+                const mouseX = eventData.event.clientX;
+                const mouseY = eventData.event.clientY;
+                if (custom && custom.type === 'domain') {
+                    // Domain hover: show grouped viewpoints
+                    const domain = pt.label;
+                    const vps = getDomainViewpoints(domain);
+                    let html = `<h3>${domain}</h3>`;
+                    ['Conceptual Level', 'Logical Level', 'Physical Level'].forEach(level => {
+                        const short = level.replace(' Level', '');
+                        const group = vps[level];
+                        if (group.List.length || group.Matrix.length || group.Diagram.length) {
+                            html += `<div class="level-group"><div class="level-title">${short}</div>`;
+                            ['List', 'Matrix', 'Diagram'].forEach(type => {
+                                if (group[type].length) {
+                                    html += `<div class="vp-type">${viewpointIcons[type]} ${type}</div><ul>`;
+                                    group[type].forEach(vp => {
+                                        html += `<li class="vp-label">${vp}</li>`;
+                                    });
+                                    html += `</ul>`;
+                                }
+                            });
+                            html += `</div>`;
+                        }
+                    });
+                    showHoverCard(html, mouseX, mouseY);
+                } else if (custom && custom.type === 'viewpoint') {
+                    // Viewpoint hover: show details
+                    const vp = findViewpointByLabel(pt.label);
+                    if (vp) {
+                        const icon = viewpointIcons[vp.viewpointType] || '';
+                        let html = `<h3>${icon} ${vp.viewpoint}</h3>`;
+                        html += `<div class="meta-row"><span class="meta-label">Type:</span> <span class="meta-value">${vp.viewpointType}</span></div>`;
+                        html += `<div class="meta-row"><span class="meta-label">Category:</span> <span class="meta-value">${vp.levelOfDetail.replace(' Level','')}</span></div>`;
+                        html += `<div class="meta-row"><span class="meta-label">Domain:</span> <span class="meta-value">${vp.domain}</span></div>`;
+                        showHoverCard(html, mouseX, mouseY);
+                    }
+                } else {
+                    hideHoverCard();
+                }
+            });
+            // Hide card on mouseout
+            sunburstChartDiv.on('plotly_unhover', function() {
+                hideHoverCard();
             });
 
             // Optional: Adjust chart size on window resize
