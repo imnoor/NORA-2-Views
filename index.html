@@ -329,9 +329,10 @@
                     labels.push(item.domain);
                     parents.push("nora_root");
                     ids.push(domainId);
-                    colors.push(colorPalette[item.domain] || '#01575C'); // Use unique color per domain
-                    textColors.push('#01575C'); // Deep teal for domain text
-                    customDataForSegments.push({ type: 'domain', hoverLabel: `Enterprise Architecture Domain: ${item.domain}` }); // Tooltip for domain
+                    // Set text color to white for User Experience domain, else use deep teal
+                    colors.push(colorPalette[item.domain] || '#01575C');
+                    textColors.push(item.domain === 'User Experience' ? '#FFFFFF' : '#01575C');
+                    customDataForSegments.push({ type: 'domain', hoverLabel: `Enterprise Architecture Domain: ${item.domain}` });
                     domainMap.set(domainId, true);
                 }
 
@@ -583,7 +584,7 @@
                 } else if (custom && custom.type === 'viewpoint') {
                     lastDomainHover = false;
                     if (hoverCardHideTimeout) clearTimeout(hoverCardHideTimeout);
-                    // Viewpoint hover: show details
+                    // Viewpoint hover: show only the card, no tooltip
                     const vp = findViewpointByLabel(pt.label);
                     if (vp) {
                         const icon = viewpointIcons[vp.viewpointType] || '';
