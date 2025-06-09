@@ -14,14 +14,28 @@
         body {
             font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(120deg, #e0f7fa 0%, #f3f4f6 100%);
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.13;
+            background: url('data:image/svg+xml;utf8,<svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="40" cy="40" r="36" stroke="%2300C2CB" stroke-width="2" fill="none"/><circle cx="40" cy="40" r="18" stroke="%234A90A1" stroke-width="1.5" fill="none"/><rect x="10" y="10" width="60" height="60" rx="16" stroke="%23008C9E" stroke-width="1.5" fill="none"/></svg>');
+            background-size: 160px 160px;
+            background-repeat: repeat;
         }
         .container {
             max-width: 1200px;
             margin: 2rem auto;
             padding: 1.5rem;
-            background: rgba(255,255,255,0.95);
+            background: rgba(255,255,255,0.92);
             border-radius: 1.5rem;
-            box-shadow: 0 12px 32px 0 rgba(0, 194, 203, 0.10), 0 2px 4px 0 rgba(1, 87, 92, 0.08);
+            box-shadow: 0 12px 32px 0 rgba(0, 194, 203, 0.13), 0 2px 4px 0 rgba(1, 87, 92, 0.10);
+            border: 1.5px solid #00C2CB;
+            backdrop-filter: blur(6px);
         }
         .plotly-graph-div {
             margin: 0 auto;
