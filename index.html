@@ -255,14 +255,20 @@
             const textColors = []; // Array to store text colors for each segment
             const customDataForSegments = []; // Array to store custom data for tooltips
 
-            // Custom color palette based on the attached image
+            // Custom color palette with unique, vibrant colors for each domain
             const colorPalette = {
-                'nora_root': '#FFFFFF', // Changed to white for NORA root
-                'Domain_Color': '#01575C', // Dark Teal for all Domains
-                'Level_C': '#00C2CB', // Bright Aqua for Conceptual
-                'Level_L': '#008C9E', // Mid Teal for Logical
-                'Level_P': '#4A90A1', // Muted Green/Blue for Physical
-                'Viewpoint_Background': '#F8F8F8', // Very light gray for outermost viewpoints
+                'nora_root': '#FFFFFF',
+                'Strategic Alignment': '#00C2CB', // Vibrant Teal
+                'Business': '#4A90A1',           // Indigo Blue
+                'User Experience': '#7B61FF',    // Vibrant Purple
+                'Data': '#00BFAE',               // Aqua Green
+                'Applications': '#FFB347',       // Orange
+                'Technology': '#FF6F91',         // Pink Coral
+                'Security': '#008C9E',           // Deep Teal
+                'Level_C': '#B2F1F7',            // Light Aqua for Conceptual
+                'Level_L': '#B3D8F7',            // Light Blue for Logical
+                'Level_P': '#D1C4E9',            // Light Purple for Physical
+                'Viewpoint_Background': '#F8F8F8',
             };
 
 
@@ -290,8 +296,8 @@
                     labels.push(item.domain);
                     parents.push("nora_root");
                     ids.push(domainId);
-                    colors.push(colorPalette['Domain_Color']);
-                    textColors.push('#000000'); // Black text for domains
+                    colors.push(colorPalette[item.domain] || '#01575C'); // Use unique color per domain
+                    textColors.push('#01575C'); // Deep teal for domain text
                     customDataForSegments.push({ type: 'domain', hoverLabel: `Enterprise Architecture Domain: ${item.domain}` }); // Tooltip for domain
                     domainMap.set(domainId, true);
                 }
@@ -322,7 +328,7 @@
                     parents.push(domainId);
                     ids.push(levelId);
                     colors.push(levelColor);
-                    textColors.push('#000000'); // Black text for levels
+                    textColors.push('#01575C'); // Deep teal for level text
                     customDataForSegments.push({ type: 'level', levelFull: fullLevelName, hoverLabel: `Level: ${fullLevelName}` }); // Tooltip for level
                     levelMap.set(levelId, true);
                 }
