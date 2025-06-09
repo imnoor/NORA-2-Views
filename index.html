@@ -52,6 +52,10 @@
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.18s cubic-bezier(.4,0,.2,1);
+            max-height: 340px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #00C2CB #e0f7fa;
         }
         .hover-card.visible {
             opacity: 1;
@@ -118,11 +122,22 @@
             font-weight: 500;
             letter-spacing: 0.01em;
         }
+        .hover-card::-webkit-scrollbar {
+            width: 8px;
+        }
+        .hover-card::-webkit-scrollbar-thumb {
+            background: #00C2CB;
+            border-radius: 6px;
+        }
+        .hover-card::-webkit-scrollbar-track {
+            background: #e0f7fa;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body class="antialiased">
     <div class="container">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center" style="letter-spacing:0.01em;">Enhanced Enterprise Architecture Viewpoints Dashboard</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center" style="letter-spacing:0.01em;">NORA 2 : Viewpoints Dashboard</h1>
         <div id="sunburstChart" class="w-full h-[600px] md:h-[800px]"></div>
 
         <div class="mt-8 p-4 bg-gray-50 rounded-lg shadow-sm">
@@ -429,6 +444,10 @@
             });
 
             // --- Hover Card Logic ---
+            let hoverCardHideTimeout = null;
+            let lastDomainHover = false;
+            let popupHovered = false;
+
             // Helper: Group viewpoints by level and type for a domain
             function getDomainViewpoints(domain) {
                 const levels = ['Conceptual Level', 'Logical Level', 'Physical Level'];
@@ -451,17 +470,20 @@
                 return processedData.find(item => item.viewpoint === cleanLabel);
             }
 
-            // Helper: Show hover card
+            // Helper: Show hover card at a fixed position
             function showHoverCard(html, x, y) {
                 hoverCard.innerHTML = html;
                 hoverCard.classList.add('visible');
-                // Position: offset from mouse, but keep in viewport
+                // Position: offset from event, but fixed (not following mouse)
                 const cardWidth = 360;
-                const cardHeight = 220;
+                const cardHeight = Math.min(hoverCard.scrollHeight, 340); // max-height from CSS
                 let left = x + 24;
                 let top = y + 12;
+                if (top + cardHeight > window.innerHeight - 12) {
+                    top = y - cardHeight - 18;
+                    if (top < 12) top = 12;
+                }
                 if (left + cardWidth > window.innerWidth - 12) left = window.innerWidth - cardWidth - 12;
-                if (top + cardHeight > window.innerHeight - 12) top = window.innerHeight - cardHeight - 12;
                 hoverCard.style.left = left + 'px';
                 hoverCard.style.top = top + 'px';
             }
@@ -469,6 +491,18 @@
                 hoverCard.classList.remove('visible');
                 hoverCard.innerHTML = '';
             }
+
+            // Keep card visible if mouse is over it
+            hoverCard.addEventListener('mouseenter', function() {
+                popupHovered = true;
+                if (hoverCardHideTimeout) clearTimeout(hoverCardHideTimeout);
+            });
+            hoverCard.addEventListener('mouseleave', function() {
+                popupHovered = false;
+                hoverCardHideTimeout = setTimeout(() => {
+                    if (!lastDomainHover && !popupHovered) hideHoverCard();
+                }, 220);
+            });
 
             // Sunburst hover event
             sunburstChartDiv.on('plotly_hover', function(eventData) {
@@ -478,7 +512,8 @@
                 const mouseX = eventData.event.clientX;
                 const mouseY = eventData.event.clientY;
                 if (custom && custom.type === 'domain') {
-                    // Domain hover: show grouped viewpoints
+                    lastDomainHover = true;
+                    if (hoverCardHideTimeout) clearTimeout(hoverCardHideTimeout);
                     const domain = pt.label;
                     const vps = getDomainViewpoints(domain);
                     let html = `<h3>${domain}</h3>`;
@@ -486,12 +521,12 @@
                         const short = level.replace(' Level', '');
                         const group = vps[level];
                         if (group.List.length || group.Matrix.length || group.Diagram.length) {
-                            html += `<div class="level-group"><div class="level-title">${short}</div>`;
+                            html += `<div class=\"level-group\"><div class=\"level-title\">${short}</div>`;
                             ['List', 'Matrix', 'Diagram'].forEach(type => {
                                 if (group[type].length) {
-                                    html += `<div class="vp-type">${viewpointIcons[type]} ${type}</div><ul>`;
+                                    html += `<div class=\"vp-type\">${viewpointIcons[type]} ${type}</div><ul>`;
                                     group[type].forEach(vp => {
-                                        html += `<li class="vp-label">${vp}</li>`;
+                                        html += `<li class=\"vp-label\">${vp}</li>`;
                                     });
                                     html += `</ul>`;
                                 }
@@ -501,23 +536,30 @@
                     });
                     showHoverCard(html, mouseX, mouseY);
                 } else if (custom && custom.type === 'viewpoint') {
+                    lastDomainHover = false;
+                    if (hoverCardHideTimeout) clearTimeout(hoverCardHideTimeout);
                     // Viewpoint hover: show details
                     const vp = findViewpointByLabel(pt.label);
                     if (vp) {
                         const icon = viewpointIcons[vp.viewpointType] || '';
                         let html = `<h3>${icon} ${vp.viewpoint}</h3>`;
-                        html += `<div class="meta-row"><span class="meta-label">Type:</span> <span class="meta-value">${vp.viewpointType}</span></div>`;
-                        html += `<div class="meta-row"><span class="meta-label">Category:</span> <span class="meta-value">${vp.levelOfDetail.replace(' Level','')}</span></div>`;
-                        html += `<div class="meta-row"><span class="meta-label">Domain:</span> <span class="meta-value">${vp.domain}</span></div>`;
+                        html += `<div class=\"meta-row\"><span class=\"meta-label\">Type:</span> <span class=\"meta-value\">${vp.viewpointType}</span></div>`;
+                        html += `<div class=\"meta-row\"><span class=\"meta-label\">Category:</span> <span class=\"meta-value\">${vp.levelOfDetail.replace(' Level','')}</span></div>`;
+                        html += `<div class=\"meta-row\"><span class=\"meta-label\">Domain:</span> <span class=\"meta-value\">${vp.domain}</span></div>`;
                         showHoverCard(html, mouseX, mouseY);
                     }
                 } else {
+                    lastDomainHover = false;
+                    if (hoverCardHideTimeout) clearTimeout(hoverCardHideTimeout);
                     hideHoverCard();
                 }
             });
-            // Hide card on mouseout
+            // Hide card on mouseout, but allow sticky if mouse is over card
             sunburstChartDiv.on('plotly_unhover', function() {
-                hideHoverCard();
+                lastDomainHover = false;
+                hoverCardHideTimeout = setTimeout(() => {
+                    if (!popupHovered) hideHoverCard();
+                }, 220);
             });
 
             // Optional: Adjust chart size on window resize
