@@ -329,9 +329,15 @@
                     labels.push(item.domain);
                     parents.push("nora_root");
                     ids.push(domainId);
-                    // Set text color to white for User Experience domain, else use deep teal
                     colors.push(colorPalette[item.domain] || '#01575C');
-                    textColors.push(item.domain === 'User Experience' ? '#FFFFFF' : '#01575C');
+                    // Force white text for User Experience domain, else use black for light backgrounds or deep teal for others
+                    if (item.domain === 'User Experience') {
+                        textColors.push('#FFFFFF');
+                    } else if (colorPalette[item.domain] && colorPalette[item.domain].toLowerCase() === '#ffffff') {
+                        textColors.push('#01575C'); // fallback for white backgrounds
+                    } else {
+                        textColors.push('#FFFFFF'); // Use white for all domain text for best contrast
+                    }
                     customDataForSegments.push({ type: 'domain', hoverLabel: `Enterprise Architecture Domain: ${item.domain}` });
                     domainMap.set(domainId, true);
                 }
