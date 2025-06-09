@@ -185,6 +185,7 @@
 <body class="antialiased">
     <div class="container">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center" style="letter-spacing:0.01em;">NORA 2 : Viewpoints Dashboard</h1>
+        <div id="breadcrumb" class="mb-4 text-base font-semibold text-gray-700 flex flex-wrap items-center justify-center gap-2"></div>
         <div id="sunburstChart" class="w-full h-[600px] md:h-[800px]"></div>
 
         <div class="mt-8 p-4 bg-gray-50 rounded-lg shadow-sm">
@@ -410,10 +411,41 @@
             // Render the plot
             Plotly.newPlot(sunburstChartDiv, data, layout, { responsive: true });
 
+            // --- Breadcrumb Logic ---
+            const breadcrumbDiv = document.getElementById('breadcrumb');
+            function updateBreadcrumb(path) {
+                if (!path || path.length === 0) {
+                    breadcrumbDiv.innerHTML = '';
+                    return;
+                }
+                breadcrumbDiv.innerHTML = path.map((seg, i) => {
+                    if (i === path.length - 1) {
+                        return `<span class='text-indigo-600'>${seg}</span>`;
+                    } else {
+                        return `<span>${seg}</span><span class='mx-1 text-gray-400'>/</span>`;
+                    }
+                }).join('');
+            }
+            // Initial breadcrumb
+            updateBreadcrumb(['NORA 2 Views']);
+
             // Handle Plotly click events
             sunburstChartDiv.on('plotly_click', function(data) {
                 if (data.points.length > 0) {
                     const clickedPoint = data.points[0];
+                    // Build full hierarchy path from root to clicked label using ids/parents
+                    let path = [];
+                    let currentId = clickedPoint.id;
+                    while (currentId) {
+                        const idx = ids.findIndex(id => id === currentId);
+                        if (idx === -1) break;
+                        // Remove icon from label for viewpoints
+                        let label = labels[idx].replace(/( 📄| ▦| 📈)$/,'');
+                        path.unshift(label);
+                        currentId = parents[idx];
+                    }
+                    updateBreadcrumb(path);
+
                     // Check if the clicked point is a viewpoint to enable/disable button
                     if (clickedPoint.customdata && clickedPoint.customdata.type === 'viewpoint') {
                         // Extract the viewpoint name from the label, removing the icon
@@ -431,6 +463,11 @@
                     llmOutputDiv.classList.add('hidden');
                     clearDescriptionBtn.disabled = true;
                 }
+            });
+
+            // Reset breadcrumb on background click
+            sunburstChartDiv.on('plotly_doubleclick', function() {
+                updateBreadcrumb(['NORA 2 Views']);
             });
 
             // Function to call Gemini API
