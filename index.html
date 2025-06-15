@@ -192,11 +192,11 @@
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Open Sourced, Free to use ✨</h2>
             <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-4">
                 <p id="selectedViewpointDisplay" class="text-gray-600 font-medium"></p>
-                <button id="generateDescriptionBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
-                    ✨ Generate Description
+                <button id="generateDescriptionBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    
                 </button>
-                <button id="clearDescriptionBtn" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed">
-                    Clear Description
+                <button id="clearDescriptionBtn" class="bg-gray-400 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    
                 </button>
             </div>
             <div id="llmOutput" class="llm-output-card hidden">
@@ -213,148 +213,27 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Data from the provided CSV, hardcoded for demonstration within the HTML
             const rawData = [
-                {
-                    "Domain": "Strategic Alignment",
-                    "Level of Detail": "Conceptual Level",
-                    "List": "Strategic Goals Guide",
-                    "Matrix": "Objectives / Pillars Matrix",
-                    "Diagram": "Strategic House Diagram"
-                },
-                {
-                    "Domain": "Business",
-                    "Level of Detail": "Conceptual Level",
-                    "List": "Service Catalog",
-                    "Matrix": "Organizational Structure Matrix",
-                    "Diagram": "Business Capability Map"
-                },
-                {
-                    "Domain": "Business",
-                    "Level of Detail": "Conceptual Level",
-                    "List": "",
-                    "Matrix": "",
-                    "Diagram": "Value Chain"
-                },
-                {
-                    "Domain": "Business",
-                    "Level of Detail": "Logical Level",
-                    "List": "Work Procedures Catalogue\\nForms/Templates Catalogue\\nPolicies Catalogue",
-                    "Matrix": "Organizational Units/Services\\nBusiness Capabilities/Organizational Units",
-                    "Diagram": "Interaction model of the entity/organizational unit"
-                },
-                {
-                    "Domain": "Business",
-                    "Level of Detail": "Physical Level",
-                    "List": "",
-                    "Matrix": "Tasks/Job Titles\\nServices/Forms\\nServices/Work Procedures\\nServices/Applications",
-                    "Diagram": "Workflow diagram"
-                },
-                {
-                    "Domain": "Customer Experience",
-                    "Level of Detail": "Conceptual Level",
-                    "List": "",
-                    "Matrix": "",
-                    "Diagram": "Beneficiary Persona Card"
-                },
-                {
-                    "Domain": "Customer Experience",
-                    "Level of Detail": "Logical Level",
-                    "List": "User Journey Enhancement Catalogue",
-                    "Matrix": "Beneficiaries/Beneficiary Personas\\nServices/Beneficiary Personas\\nServices/Beneficiary Journey\\nBeneficiary Personas/Beneficiary Journey",
-                    "Diagram": "Beneficiary Journey Planner"
-                },
-                {
-                    "Domain": "Customer Experience",
-                    "Level of Detail": "Physical Level",
-                    "List": "",
-                    "Matrix": "Beneficiary journeys/beneficiary experience improvement priorities",
-                    "Diagram": ""
-                },
-                {
-                    "Domain": "Data",
-                    "Level of Detail": "Conceptual Level",
-                    "List": "",
-                    "Matrix": "",
-                    "Diagram": "Data landscape"
-                },
-                {
-                    "Domain": "Data",
-                    "Level of Detail": "Logical Level",
-                    "List": "Data Owners Index",
-                    "Matrix": "Data entity/business capability\\nData entity/applications",
-                    "Diagram": ""
-                },
-                {
-                    "Domain": "Data",
-                    "Level of Detail": "Physical Level",
-                    "List": "Data Dictionary\\nData Storage (Vaults) Directory",
-                    "Matrix": "Data entity/Data attributes\\nData entity/Data Source:Storage",
-                    "Diagram": ""
-                },
-                {
-                    "Domain": "Applications",
-                    "Level of Detail": "Conceptual Level",
-                    "List": "",
-                    "Matrix": "",
-                    "Diagram": "General landscape of applications"
-                },
-                {
-                    "Domain": "Applications",
-                    "Level of Detail": "Logical Level",
-                    "List": "Applications Catalogue",
-                    "Matrix": "Application/Beneficiary\\nApplication/Organizational Unit\\nApplication/Business Service\\nApplication/Business Process\\nApplication/Server",
-                    "Diagram": "Applications by Organizational Unit\\nApplication Components Landscape\\nIntegration Landscape\\nApplication Integration Landscape"
-                },
-                {
-                    "Domain": "Applications",
-                    "Level of Detail": "Physical Level",
-                    "List": "Technical Integration Registry",
-                    "Matrix": "Application/Security Software",
-                    "Diagram": "Application perspective by development type, indicating the source type"
-                },
-                {
-                    "Domain": "Technology",
-                    "Level of Detail": "Conceptual Level",
-                    "List": "",
-                    "Matrix": "",
-                    "Diagram": "The general landscape of data center distribution\\n\u00a0The general landscape of technical infrastructure capabilities"
-                },
-                {
-                    "Domain": "Technology",
-                    "Level of Detail": "Logical Level",
-                    "List": "Infrastructure Tools Catalogue\\nInfrastructure Services Catalogue",
-                    "Matrix": "Data Center / Service Provider\\nData Center / Application",
-                    "Diagram": "Network architecture master plan"
-                },
-                {
-                    "Domain": "Technology",
-                    "Level of Detail": "Physical Level",
-                    "List": "Physical Host Devices Catalogue\\nServers Catalogue\\nNetwork Devices Catalogue\\nStorage Catalogue",
-                    "Matrix": "",
-                    "Diagram": "Networking Circuit Diagram"
-                },
-                {
-                    "Domain": "Security",
-                    "Level of Detail": "Conceptual Level",
-                    "List": "",
-                    "Matrix": "Security Service / Service Provider",
-                    "Diagram": "General view of security architecture capabilities"
-                },
-                {
-                    "Domain": "Security",
-                    "Level of Detail": "Logical Level",
-                    "List": "Security Hardware Catalogue\\nSecurity Software Catalogue\\nSecurity Services Catalogue",
-                    "Matrix": "Security hardware and software functions/application locations\\nSecurity hardware and software functions/associated applications",
-                    "Diagram": ""
-                },
-                {
-                    "Domain": "Security",
-                    "Level of Detail": "Physical Level",
-                    "List": "",
-                    "Matrix": "",
-                    "Diagram": "Security device distribution diagram in data centers"
-                }
-            ];
-
+    {"Domain": "Strategic Alignment", "Level of Detail": "Conceptual Level", "List": "Strategic Goals Guide", "Matrix": "Objectives / Pillars Matrix", "Diagram": "Strategic House Diagram"},
+    {"Domain": "Business", "Level of Detail": "Conceptual Level", "List": "Service Catalog", "Matrix": "Organizational Structure Matrix", "Diagram": "Business Capability Map"},
+    {"Domain": "Business", "Level of Detail": "Conceptual Level", "List": null, "Matrix": null, "Diagram": "Value Chain"},
+    {"Domain": "Business", "Level of Detail": "Logical Level", "List": "Work Procedures Catalogue\nForms/Templates Catalogue\nPolicies Catalogue", "Matrix": "Organizational Units/Services\nBusiness Capabilities/Organizational Units", "Diagram": "Interaction model of the entity/organizational unit"},
+    {"Domain": "Business", "Level of Detail": "Physical Level", "List": null, "Matrix": "Tasks/Job Titles\nServices/Forms\nServices/Work Procedures\nServices/Applications", "Diagram": "Workflow diagram"},
+    {"Domain": "Customer Experience", "Level of Detail": "Conceptual Level", "List": "Beneficiary Persona Card", "Matrix": null, "Diagram": null},
+    {"Domain": "Customer Experience", "Level of Detail": "Logical Level", "List": "User Journey Enhancement Catalogue", "Matrix": "Beneficiaries/Beneficiary Personas\nServices/Beneficiary Personas\nServices/Beneficiary Journey\nBeneficiary Personas/Beneficiary Journey\nBeneficiary Journey Planner", "Diagram": null},
+    {"Domain": "Customer Experience", "Level of Detail": "Physical Level", "List": "Beneficiary journeys/beneficiary experience improvement priorities", "Matrix": null, "Diagram": null},
+    {"Domain": "Data", "Level of Detail": "Conceptual Level", "List": "Data landscape", "Matrix": null, "Diagram": null},
+    {"Domain": "Data", "Level of Detail": "Logical Level", "List": "Data Owners Index", "Matrix": "Data entity/business capability\nData entity/applications", "Diagram": null},
+    {"Domain": "Data", "Level of Detail": "Physical Level", "List": "Data Dictionary\nData Storage (Vaults) Directory", "Matrix": "Data entity/Data attributes\nData entity/Data Source:Storage", "Diagram": null},
+    {"Domain": "Applications", "Level of Detail": "Conceptual Level", "List": "General landscape of applications", "Matrix": null, "Diagram": null},
+    {"Domain": "Applications", "Level of Detail": "Logical Level", "List": "Applications Catalogue", "Matrix": "Application/Beneficiary\nApplication/Organizational Unit\nApplication/Business Service\nApplication/Business Process\nApplication/Server\nApplications by Organizational Unit\nApplication Components Landscape\nIntegration Landscape\nApplication Integration Landscape", "Diagram": null},
+    {"Domain": "Applications", "Level of Detail": "Physical Level", "List": "Technical Integration Registry", "Matrix": "Application/Security Software\nApplication perspective by development type, indicating the source type", "Diagram": null},
+    {"Domain": "Technology", "Level of Detail": "Conceptual Level", "List": "The general landscape of data center distribution\nThe general landscape of technical infrastructure capabilities", "Matrix": null, "Diagram": null},
+    {"Domain": "Technology", "Level of Detail": "Logical Level", "List": "Infrastructure Tools Catalogue\nInfrastructure Services Catalogue", "Matrix": "Data Center / Service Provider\nData Center / Application\nNetwork architecture master plan", "Diagram": null},
+    {"Domain": "Technology", "Level of Detail": "Physical Level", "List": "Physical Host Devices Catalogue\nServers Catalogue\nNetwork Devices Catalogue\nStorage Catalogue", "Matrix": "Networking Circuit Diagram", "Diagram": null},
+    {"Domain": "Security", "Level of Detail": "Conceptual Level", "List": "Security Service / Service Provider\nGeneral view of security architecture capabilities", "Matrix": null, "Diagram": null},
+    {"Domain": "Security", "Level of Detail": "Logical Level", "List": "Security Hardware Catalogue\nSecurity Software Catalogue\nSecurity Services Catalogue", "Matrix": "Security hardware and software functions/application locations\nSecurity hardware and software functions/associated applications", "Diagram": null},
+    {"Domain": "Security", "Level of Detail": "Physical Level", "List": "Security device distribution diagram in data centers", "Matrix": null, "Diagram": null}
+];
             // Mapping for viewpoint type icons
             const viewpointIcons = {
                 'List': '📄',   // Page or document
@@ -382,7 +261,7 @@
                         const viewpoints = row[viewpointType];
                         if (viewpoints) {
                             // Split multiple viewpoints in a single cell by newline
-                            viewpoints.split('\\n').forEach(viewpoint => { // Changed to split by escaped newline
+                            viewpoints.split('\n').forEach(viewpoint => {
                                 const trimmedViewpoint = viewpoint.trim();
                                 if (trimmedViewpoint) {
                                     processed.push({
@@ -411,10 +290,10 @@
 
             // Custom color palette with improved, harmonious colors for each domain
             const colorPalette = {
-                'nora_root': '#FFFFFF', // Changed to white for NORA root
+                'nora_root': '#FFFFFF',
                 'Strategic Alignment': '#00C2CB', // Vibrant Teal
                 'Business': '#009688',           // Harmonious Teal-Green
-                'Customer Experience': '#5C6BC0', // Soft Indigo (updated from User Experience)
+                'User Experience': '#5C6BC0',    // Soft Indigo
                 'Data': '#00BFAE',               // Aqua Green
                 'Applications': '#FFB347',       // Orange
                 'Technology': '#FF6F91',         // Pink Coral
@@ -432,7 +311,7 @@
             ids.push("nora_root");
             colors.push(colorPalette['nora_root']);
             textColors.push('#000000'); // Black text for the white root
-            customDataForSegments.push({ type: 'root', hoverLabel: "<b>NORA 2 Views</b><br>This is the core NORA 2 Views concept." }); // Tooltip for NORA root
+            customDataForSegments.push({ type: 'root', hoverLabel: "This is the core NORA 2 Views." }); // Tooltip for NORA root
 
             const domainMap = new Map();
             const levelMap = new Map();
@@ -450,47 +329,47 @@
                     labels.push(item.domain);
                     parents.push("nora_root");
                     ids.push(domainId);
-                    colors.push(colorPalette[item.domain] || '#01575C'); // Use specific domain color
-                    // Text color for domains based on the new palette - white for darker, black for lighter.
-                    // Adjusted for the new Customer Experience domain.
-                    if (['Customer Experience', 'Applications', 'Technology'].includes(item.domain)) {
-                        textColors.push('#000000'); // Black for lighter backgrounds
+                    colors.push(colorPalette[item.domain] || '#01575C');
+                    // Force white text for User Experience domain, else use black for light backgrounds or deep teal for others
+                    if (item.domain === 'User Experience') {
+                        textColors.push('#FFFFFF');
+                    } else if (colorPalette[item.domain] && colorPalette[item.domain].toLowerCase() === '#ffffff') {
+                        textColors.push('#01575C'); // fallback for white backgrounds
                     } else {
-                        textColors.push('#FFFFFF'); // White for darker backgrounds
+                        textColors.push('#FFFFFF'); // Use white for all domain text for best contrast
                     }
-                    customDataForSegments.push({ type: 'domain', hoverLabel: `<b>Domain:</b> ${item.domain}` });
+                    customDataForSegments.push({ type: 'domain', hoverLabel: `Enterprise Architecture Domain: ${item.domain}` });
                     domainMap.set(domainId, true);
                 }
 
                 // Add Level of Detail (third layer) - Use short versions and assign specific colors
-                let abbreviatedLevel;
-                let fullLevelName;
-                let levelColor;
-                if (item.levelOfDetail === "Conceptual Level") {
-                    abbreviatedLevel = "C";
-                    fullLevelName = "Conceptual";
-                    levelColor = colorPalette['Level_C'];
-                } else if (item.levelOfDetail === "Logical Level") {
-                    abbreviatedLevel = "L";
-                    fullLevelName = "Logical";
-                    levelColor = colorPalette['Level_L'];
-                } else if (item.levelOfDetail === "Physical Level") {
-                    abbreviatedLevel = "P";
-                    fullLevelName = "Physical";
-                    levelColor = colorPalette['Level_P'];
-                } else {
-                    abbreviatedLevel = item.levelOfDetail; // fallback
-                    fullLevelName = item.levelOfDetail;
-                    levelColor = '#CCCCCC'; // default fallback color
-                }
-
                 if (!levelMap.has(levelId)) {
+                    let abbreviatedLevel;
+                    let fullLevelName;
+                    let levelColor;
+                    if (item.levelOfDetail === "Conceptual Level") {
+                        abbreviatedLevel = "C";
+                        fullLevelName = "Conceptual";
+                        levelColor = colorPalette['Level_C'];
+                    } else if (item.levelOfDetail === "Logical Level") {
+                        abbreviatedLevel = "L";
+                        fullLevelName = "Logical";
+                        levelColor = colorPalette['Level_L'];
+                    } else if (item.levelOfDetail === "Physical Level") {
+                        abbreviatedLevel = "P";
+                        fullLevelName = "Physical";
+                        levelColor = colorPalette['Level_P'];
+                    } else {
+                        abbreviatedLevel = item.levelOfDetail; // fallback
+                        fullLevelName = item.levelOfDetail;
+                        levelColor = '#CCCCCC'; // default fallback color
+                    }
                     labels.push(abbreviatedLevel);
                     parents.push(domainId);
                     ids.push(levelId);
                     colors.push(levelColor);
                     textColors.push('#01575C'); // Deep teal for level text
-                    customDataForSegments.push({ type: 'level', levelFull: fullLevelName, hoverLabel: `<b>Level:</b> ${fullLevelName}` }); // Tooltip for level
+                    customDataForSegments.push({ type: 'level', levelFull: fullLevelName, hoverLabel: `Level: ${fullLevelName}` }); // Tooltip for level
                     levelMap.set(levelId, true);
                 }
 
@@ -501,17 +380,7 @@
                 ids.push(viewpointId);
                 colors.push(colorPalette['Viewpoint_Background']);
                 textColors.push('#000000'); // Black text for viewpoints
-
-                // Construct the "beautiful card" HTML for viewpoints
-                const viewpointHoverHtml = `
-                    <div style="background-color: white; padding: 12px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: 'Inter', sans-serif; min-width: 220px; border: 1px solid #ddd; line-height: 1.4;">
-                        <h4 style="font-weight: 700; font-size: 1.1em; margin-bottom: 8px; color: #333;">${item.viewpoint}</h4>
-                        <p style="margin-bottom: 5px; color: #555; font-size: 0.95em;"><b>Type:</b> ${item.viewpointType}</p>
-                        <p style="margin-bottom: 5px; color: #555; font-size: 0.95em;"><b>Category:</b> ${fullLevelName}</p>
-                        <p style="margin-bottom: 0; color: #555; font-size: 0.95em;"><b>Domain:</b> ${item.domain}</p>
-                    </div>
-                `;
-                customDataForSegments.push({ type: 'viewpoint', name: item.viewpoint, viewType: item.viewpointType, domain: item.domain, levelFull: fullLevelName, hoverLabel: viewpointHoverHtml }); // Tooltip for viewpoint
+                customDataForSegments.push({ type: 'viewpoint', name: item.viewpoint, viewType: item.viewpointType, hoverLabel: `Viewpoint: ${item.viewpoint}<br>Type: ${item.viewpointType}` }); // Tooltip for viewpoint
             });
 
             const data = [{
@@ -579,7 +448,7 @@
                     // Check if the clicked point is a viewpoint to enable/disable button
                     if (clickedPoint.customdata && clickedPoint.customdata.type === 'viewpoint') {
                         // Extract the viewpoint name from the label, removing the icon
-                        const viewpointName = clickedPoint.label.replace(/(\s*)(�|▦|📈)$/, '').trim();
+                        const viewpointName = clickedPoint.label.replace(/(\s*)(📄|▦|📈)$/, '').trim();
                         selectedViewpoint = viewpointName;
                         selectedViewpointDisplay.textContent = `Selected Viewpoint: ${selectedViewpoint}`;
                         generateDescriptionBtn.disabled = false;
@@ -694,7 +563,7 @@
                 hoverCard.innerHTML = html;
                 hoverCard.classList.add('visible');
                 // Position: offset from event, but fixed (not following mouse)
-                const cardWidth = 360; // Max-width from CSS for calculation
+                const cardWidth = 360;
                 const cardHeight = Math.min(hoverCard.scrollHeight, 340); // max-height from CSS
                 let left = x + 24;
                 let top = y + 12;
@@ -725,57 +594,54 @@
 
             // Sunburst hover event
             sunburstChartDiv.on('plotly_hover', function(eventData) {
-                if (!eventData || !eventData.points || !eventData.points.length) {
-                    // If no points are hovered, hide the card immediately
-                    lastDomainHover = false;
-                    if (hoverCardHideTimeout) clearTimeout(hoverCardHideTimeout);
-                    hideHoverCard();
-                    return;
-                }
-
+                if (!eventData || !eventData.points || !eventData.points.length) return;
                 const pt = eventData.points[0];
                 const custom = pt.customdata;
                 const mouseX = eventData.event.clientX;
                 const mouseY = eventData.event.clientY;
-
-                if (custom) {
-                    if (custom.type === 'domain') {
-                        lastDomainHover = true;
-                        if (hoverCardHideTimeout) clearTimeout(hoverCardHideTimeout);
-                        const domain = pt.label;
-                        const vps = getDomainViewpoints(domain);
-                        let html = `<h3>${domain}</h3>`;
-                        ['Conceptual Level', 'Logical Level', 'Physical Level'].forEach(level => {
-                            const short = level.replace(' Level', '');
-                            const group = vps[level];
-                            if (group.List.length || group.Matrix.length || group.Diagram.length) {
-                                html += `<div class=\"level-group\"><div class=\"level-title\">${short}</div>`;
-                                ['List', 'Matrix', 'Diagram'].forEach(type => {
-                                    if (group[type].length) {
-                                        html += `<div class=\"vp-type\">${viewpointIcons[type]} ${type}</div><ul>`;
-                                        group[type].forEach(vp => {
-                                            html += `<li class=\"vp-label\">${vp}</li>`;
-                                        });
-                                        html += `</ul>`;
-                                    }
-                                });
-                                html += `</div>`;
-                            }
-                        });
+                if (custom && custom.type === 'domain') {
+                    lastDomainHover = true;
+                    if (hoverCardHideTimeout) clearTimeout(hoverCardHideTimeout);
+                    const domain = pt.label;
+                    const vps = getDomainViewpoints(domain);
+                    let html = `<h3>${domain}</h3>`;
+                    ['Conceptual Level', 'Logical Level', 'Physical Level'].forEach(level => {
+                        const short = level.replace(' Level', '');
+                        const group = vps[level];
+                        if (group.List.length || group.Matrix.length || group.Diagram.length) {
+                            html += `<div class=\"level-group\"><div class=\"level-title\">${short}</div>`;
+                            ['List', 'Matrix', 'Diagram'].forEach(type => {
+                                if (group[type].length) {
+                                    html += `<div class=\"vp-type\">${viewpointIcons[type]} ${type}</div><ul>`;
+                                    group[type].forEach(vp => {
+                                        html += `<li class=\"vp-label\">${vp}</li>`;
+                                    });
+                                    html += `</ul>`;
+                                }
+                            });
+                            html += `</div>`;
+                        }
+                    });
+                    showHoverCard(html, mouseX, mouseY);
+                } else if (custom && custom.type === 'viewpoint') {
+                    lastDomainHover = false;
+                    if (hoverCardHideTimeout) clearTimeout(hoverCardHideTimeout);
+                    // Viewpoint hover: show only the card, no tooltip
+                    const vp = findViewpointByLabel(pt.label);
+                    if (vp) {
+                        const icon = viewpointIcons[vp.viewpointType] || '';
+                        let html = `<h3>${icon} ${vp.viewpoint}</h3>`;
+                        html += `<div class=\"meta-row\"><span class=\"meta-label\">Type:</span> <span class=\"meta-value\">${vp.viewpointType}</span></div>`;
+                        html += `<div class=\"meta-row\"><span class=\"meta-label\">Category:</span> <span class=\"meta-value\">${vp.levelOfDetail.replace(' Level','')}</span></div>`;
+                        html += `<div class=\"meta-row\"><span class=\"meta-label\">Domain:</span> <span class=\"meta-value\">${vp.domain}</span></div>`;
                         showHoverCard(html, mouseX, mouseY);
-                    } else if (custom.type === 'viewpoint') {
-                        lastDomainHover = false; // Hovering over a viewpoint, not a domain summary
-                        if (hoverCardHideTimeout) clearTimeout(hoverCardHideTimeout);
-                        // For viewpoints, use the pre-rendered HTML from customdata.hoverLabel
-                        showHoverCard(custom.hoverLabel, mouseX, mouseY);
-                    } else {
-                        lastDomainHover = false; // Other segments (root, level)
-                        if (hoverCardHideTimeout) clearTimeout(hoverCardHideTimeout);
-                        hideHoverCard();
                     }
+                } else {
+                    lastDomainHover = false;
+                    if (hoverCardHideTimeout) clearTimeout(hoverCardHideTimeout);
+                    hideHoverCard();
                 }
             });
-
             // Hide card on mouseout, but allow sticky if mouse is over card
             sunburstChartDiv.on('plotly_unhover', function() {
                 lastDomainHover = false;
@@ -795,4 +661,3 @@
     </script>
 </body>
 </html>
-�
